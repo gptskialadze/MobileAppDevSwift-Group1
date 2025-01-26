@@ -87,3 +87,45 @@ func findLongestWord(words: [String?]) -> String? {
 if let longWord = findLongestWord(words: ["Hello", "World", "Swift", "Programming"]) {
     print(longWord)
 }
+
+
+//Task 4: Shopping List
+
+struct ShoppingItem {
+    var name: String
+    var quantity: Double
+    var isPurchased: Bool = false
+}
+
+struct ShoppingList {
+    var items: [String: ShoppingItem] = [:]
+    
+    mutating func addItem(item: ShoppingItem)-> Void {
+        self.items = [item.name: item]
+    }
+    
+    mutating func markAsPurchased(item: ShoppingItem) {
+        self.items[item.name]?.isPurchased = true
+    }
+    
+    mutating func markItemAsPurchased(itemName: String){
+        if let item = self.items[itemName] {
+            self.items[itemName]?.isPurchased = true
+        }
+    }
+    
+    func listUnpurchasedItems() -> [ShoppingItem] {
+         var unParchised = items.filter({ (key: String, value: ShoppingItem) in
+             value.isPurchased == false
+        })
+        return Array(unParchised.values)
+    }
+}
+
+var shoppingList = ShoppingList()
+shoppingList.addItem(item: ShoppingItem(name: "Apples", quantity: 5))
+shoppingList.addItem(item: ShoppingItem(name: "Bananas", quantity: 3))
+shoppingList.markItemAsPurchased(itemName: "Apples")
+
+let unpurchased = shoppingList.listUnpurchasedItems()
+print(unpurchased)
