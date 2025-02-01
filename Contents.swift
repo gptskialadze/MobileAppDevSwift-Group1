@@ -1,106 +1,131 @@
 import UIKit
 
-//Task 1: Practice Loops
-
-//For Loop
-for  i in 1...10 {
-    let result  = i%2 == 0 ? "\(i)  Even" : "\(i)  Odd"
+//Task 1: Functions
+func factorial(n: Int?) -> Int? {
+    guard let n = n else {
+          return nil
+      }
+        if n < 0 {
+            print(n, "is negative")
+            return nil
+        }
+        if n == 0 || n == 1 {
+            return 1
+        }
+        if n > 1 {
+            if let recursiveResult = factorial(n: n - 1) {
+                return n * recursiveResult
+            } else {
+                return nil
+            }
+    }
+    return nil
+}
+if let result = factorial(n: 5) {
     print(result)
 }
 
-//While loop
-var i = 1
-while i <= 10 {
-    let result  = i%2 == 0 ? "\(i)  Even" : "\(i)  Odd"
-    print(result)
-    i += 1
+
+
+//Task 2: Working With Arrays and custom Structures
+
+struct Student {
+    var name: String
+    var grades: [Double]
 }
 
-//Repeat While
-var j = 1
-repeat {
-    let result  = j%2 == 0 ? "\(j)  Even" : "\(j)  Odd"
-    print(result)
-    j += 1
-} while j <= 10
+func averageGrade(student: Student) -> Double? {
+    var sum: Double = 0
+    for i in student.grades {
+        sum += i
+    }
+    return sum / Double(student.grades.count)
+}
 
-//-------------------------------------------------------//
-
-//Task 2: Working With Arrays
-let topMovies: [String] = [
-    "The Shawshank Redemption",
-    "The Godfather",
-    "The Dark Knight",
-    "Schindler's List",
-    "pulp fiction",
-    "The Lord of the Rings: The Return of the King",
-    "Forrest Gump",
-    "Inception",
-    "Fight Club",
-    "The Matrix"
-];
-var newArray: [String] = []
-for (index, movie) in topMovies.enumerated() {
-    if index != 0 {
-        if (index % 3) == 0 {
-            newArray.append(movie.uppercased())
-            print(movie.uppercased())
-        } else if (index % 4) == 0 {
-            newArray.append(movie.capitalized)
-            print(movie.capitalized)
-        } else {
-            newArray.append(movie)
+func bestStudent(inClass: [String: Student]) -> (Student, Double) {
+    var greateGrade: Double = 0
+    var student: String = "Alice"
+    for (index, item) in inClass.enumerated() {
+        if greateGrade < averageGrade(student: item.value)! {
+            greateGrade = averageGrade(student: item.value)!
+            student = item.key
         }
     }
-}
-print(newArray)
-
-//-------------------------------------------------------//
-
-//Task 3: Grade Tracker
-var grades = ["Alice": 85, "Bob": 90, "Charlie": 78]
-for (name, grade) in grades {
-    print("Student \(name), Degree: \(grade)")
-}
-grades["Paul"] =  95;
-
-for (name, grade) in grades {
-    if grade > 90 {
-        print("Special Grade: \(name)")
-    }
-  
+    return (inClass[student]!, greateGrade)
 }
 
-//-------------------------------------------------------//
 
-//Task 4: Person Details
-
-var clientInfo: (name: String, age: Int, city: String) = ("John", 30, "Mexico")
-print("Client Name: \(clientInfo.name)")
-print("Client Age: \(clientInfo.age)")
-print("Client City: \(clientInfo.city)")
-clientInfo.city = "New York"
-print("Client City: \(clientInfo.city)")
-
-//-------------------------------------------------------//
-
-//Task 5: Shopping List
-var cost: Double = 0
-var items = [String]()
-let shoppingItems:[(String, Double)] = [
-    ("Milk", 12),
-    ("Bread", 2.34),
-    ("Cheese", 34),
-    ("Apples", 3),
-    ("Bananas", 8)
+let students = [
+    "Alice" : Student(name: "Alice", grades: [5.5, 3.5, 5.75]),
+    "Bob" : Student(name: "Bob", grades: [5.25, 3.75, 5.75])
 ]
 
 
-
-for item in shoppingItems {
-    items.append(item.0)
-    cost = cost + item.1
-    
+if let studentsGraderesult = averageGrade(student: students["Alice"]!) {
+    print(studentsGraderesult)
 }
-print("Items: \(items) \n Total cost: \(cost)")
 
+print(bestStudent(inClass: students))
+
+
+
+
+//Task 3: Find the longest word in a list of words using recursion
+
+func findLongestWord(words: [String?]) -> String? {
+    var maxString: Int = 0
+    var word: String!
+    for item in words {
+        if maxString < (item?.count)! {
+            maxString = (item?.count)!
+            word = item
+        }
+    }
+    return word
+}
+
+if let longWord = findLongestWord(words: ["Hello", "World", "Swift", "Programming"]) {
+    print(longWord)
+}
+
+
+//Task 4: Shopping List
+
+struct ShoppingItem {
+    var name: String
+    var quantity: Double
+    var isPurchased: Bool = false
+}
+
+struct ShoppingList {
+    var items: [String: ShoppingItem] = [:]
+    
+    mutating func addItem(item: ShoppingItem)-> Void {
+        self.items = [item.name: item]
+    }
+    
+    mutating func markAsPurchased(item: ShoppingItem) {
+        self.items[item.name]?.isPurchased = true
+    }
+    
+    mutating func markItemAsPurchased(itemName: String){
+        if let item = self.items[itemName] {
+            self.items[itemName]?.isPurchased = true
+        }
+    }
+    
+    func listUnpurchasedItems() -> [ShoppingItem] {
+         var unParchised = items.filter({ (key: String, value: ShoppingItem) in
+             value.isPurchased == false
+        })
+        return Array(unParchised.values)
+    }
+}
+
+var shoppingList = ShoppingList()
+shoppingList.addItem(item: ShoppingItem(name: "Apples", quantity: 5))
+shoppingList.addItem(item: ShoppingItem(name: "Bananas", quantity: 3))
+shoppingList.markItemAsPurchased(itemName: "Apples")
+
+let unpurchased = shoppingList.listUnpurchasedItems()
+print(unpurchased)
